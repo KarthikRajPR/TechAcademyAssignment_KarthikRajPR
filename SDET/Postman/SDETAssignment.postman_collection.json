@@ -1,0 +1,26 @@
+{
+	"info": {
+		"_postman_id": "ecdc111d-e3f4-4cb5-87d6-e203cabf012d",
+		"name": "SDETAssignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13036595"
+	},
+	"item": [
+		{
+			"name": "PositiveResponse",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "NegativeResponse",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
