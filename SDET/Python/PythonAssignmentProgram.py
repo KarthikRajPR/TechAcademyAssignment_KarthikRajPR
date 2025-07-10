@@ -1,32 +1,37 @@
-import math
+import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import time
 
-class Circle:
-    def __init__(self, radius):
-        self.radius = radius
+CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 
-    def get_area(self):
-        """Calculate area of the circle"""
-        return math.pi * self.radius ** 2
+@pytest.fixture(scope="module")
+def driver():    service = Service(CHROMEDRIVER_PATH)
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.maximize_window()
+    yield driver
+    driver.quit()
 
-class Cylinder(Circle):
-    def __init__(self, radius, height):
-        super().__init__(radius)
-        self.height = height
+def test_navigation(driver):
+    base_url = "https://nocode.autify.com/"
 
-    def get_area(self):
-        """Override to calculate surface area of the cylinder"""
-        circle_area = super().get_area()
-        side_area = 2 * math.pi * self.radius * self.height
-        return 2 * circle_area + side_area
+    driver.get(base_url)
+    time.sleep(2)  # wait for page to load
 
-    def get_volume(self):
-        """Calculate volume of the cylinder"""
-        return super().get_area() * self.height
+    mobile_link_xpath = "//a[contains(text(),'Mobile')]"
+    mobile_link = driver.find_element(By.XPATH, mobile_link_xpath)
+    mobile_link.click()
+    time.sleep(2)  # wait for navigation
 
-if __name__ == "__main__":
-    cylinder = Cylinder(3, 7)
+    assert driver.current_url == "https://nocode.autify.com/mobile/", \
+        f"Expected URL https://nocode.autify.com/mobile/, but got {driver.current_url}"
 
-    print(f"Radius: {cylinder.radius}")
-    print(f"Height: {cylinder.height}")
-    print(f"Surface Area of Cylinder: {cylinder.get_area():.2f}")
-    print(f"Volume of Cylinder: {cylinder.get_volume():.2f}")
+    web_link_xpath = "//a[contains(text(),'Web')]"
+    web_link = driver.find_element(By.XPATH, web_link_xpath)
+    web_link.click()
+    time.sleep(2)  # wait for navigation
+
+    assert driver.current_url == base_url, \
+        f"Expected URL {base_url}, but got {driver.current_url}"
